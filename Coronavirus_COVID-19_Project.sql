@@ -12,40 +12,53 @@ FROM PortfolioProject..CovidDeaths
 order by 1,2
 
 -- Looking at Total cases vs Total Deaths
--- Shows chances of dying in your country if infected by corona
+-- Shows chances of dying in INDIA if infected by corona
+
 SELECT location,date,total_cases,total_deaths,(total_deaths/total_cases)*100 as DeathPercentage
 FROM PortfolioProject..CovidDeaths
-WHERE location like '%india%'
+WHERE location = 'India'
 order by 1,2
+
 
 -- Looking at total cases vs population
--- Shows what % of population got covid
+-- Shows what % of population got covid in INDIA
+
 SELECT location,date,population,total_cases,(total_cases/population)*100 as PercentagePopulationInfected
 FROM PortfolioProject..CovidDeaths
-WHERE location like '%india%'
+WHERE location like 'India'
 order by 1,2
 
+
 -- looking at countries with highest infecction rate compared to polulation
+
 SELECT location,population,MAX(total_cases) AS HighestInfectionCount,MAX(total_cases/population)*100 as PercentagePopulationInfected
 FROM PortfolioProject..CovidDeaths
---WHERE location like '%india%'
+--WHERE location like 'india'
 Group by location,population
 order by 4 desc
+
+
 -- showing countries with highest death count per population
 
-SELECT location,MAX(cast(total_deaths as int)) AS HighestDeathCount,MAX(total_deaths/population)*100 as PercentagePopulationDied
+SELECT location,
+MAX(cast(total_deaths as int)) AS HighestDeathCount,
+MAX(total_deaths/population)*100 as PercentagePopulationDied,
 FROM PortfolioProject..CovidDeaths
-WHERE location = 'India'
---WHERE Continent is not null
+--WHERE location = 'India'
+WHERE Continent is not null
 Group by location
 order by 2 desc
+
+
 -- BY CONTINENTS
+
 SELECT continent,MAX(cast(total_deaths as int)) AS HighestDeathCount,MAX(total_deaths/population)*100 as PercentagePopulationDied
 FROM PortfolioProject..CovidDeaths
---WHERE location like '%india%'
+--WHERE location like 'india'
 WHERE Continent is not null
 Group by continent
 order by 2 DESC
+
 
 --Global Numbers
 SELECT SUM(new_cases) as total_cases 
@@ -68,7 +81,9 @@ ON cd.location=cv.location
 and cd.date = cv.date
 order by 1,2,3
 
+
 --Population vs vaccination
+
 WITH Pop_vs_vac (location,date,population,NEW_vaccinations ,Rolling_people_vaccinated)
 as(
 SELECT cd.location,cd.date,cd.population ,cv.new_vaccinations,
